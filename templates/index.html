@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body{
+        margin: 0;
+        background-image: linear-gradient(to right, var(--darkestpurple) ,var(--darkpurple) );
+        background-size: cover;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    :root{
+        --purple: #B51B75;
+        --darkpurple: #640D6B;
+        --darkestpurple: #310034;
+        --yellow: #F8D082;
+        --orange: #E65C19;
+        --darkorange: #ba350a;
+    }
+
+    .container{
+        margin: auto;
+        margin-top: 10vh;
+        display: flex;
+        flex-direction: column;
+        column-gap: 10px;
+        align-items: center;
+        width: 50vw;
+        background-color: var(--yellow);
+        border-radius: 5px;
+        box-shadow: 35px 50px 80px -45px;
+
+    }
+
+    .title{
+        width: 100%;
+        background-color: black;
+        color: white;
+        text-align: center;
+        border-radius: 5px 5px 0px 0px;
+    }
+
+    .input-div{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-top: 2vh;
+        padding: 10px;
+    }
+
+    .input-task{
+        padding: 10px 15px;
+        width: 60%;
+        border-radius: 5px 0px 0px 5px;
+        border: none;
+        font-size: medium;
+    }
+
+    .input-task-edit{
+        /* padding: 16px 15px; */
+        border-radius: 5px 0px 0px 5px;
+        border: none;
+        font-size: medium;
+        background-color: var(--darkorange);
+        color: white;
+        width: 31vw;
+    }
+
+    .add-btn{
+        padding: 10px 15px;
+        border-radius: 0px 5px 5px 0px;
+        background-color: var(--purple);
+        transition: 0.3s ease;
+        color: white;
+        font-size: medium;
+        border: none;
+    }
+    .add-btn:hover{
+        background-color: var(--darkpurple);
+    }
+
+    .todo-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 10px;
+        width: 100%;
+        padding: 10px;
+        padding-bottom: 50px;
+    }
+
+    .todo{
+        display: flex;
+        padding: 0px 15px;
+        justify-content: space-between;
+        background-color: var(--orange);
+        width: 75%;
+        color: white;
+        border-radius: 5px;
+        padding-right: 0;
+        transition: 0.3s ease;
+    }
+
+    .todo:hover{
+        background-color: var(--darkorange);
+    }
+
+    .btn-container{
+        display: flex;
+    }
+
+    .edit-btn, .close-btn{
+        border: none;
+        padding: 16px;
+        transition: 0.3s ease;
+
+    }
+    .close-btn{
+        border-radius: 0px 5px 5px 0px;
+        border-left: solid #808080;
+    }
+    .edit-btn:hover, .close-btn:hover{
+        background-color: var(--purple);
+        border-left: solid;
+    }
+
+    .edit-form {
+        display: none;
+        align-items: center;
+        justify-content: space-around;
+        width: 100%;
+        margin-top: 2vh;
+        padding-bottom: 10px;
+    }
+
+    .message{
+        display: block;
+    }
+
+    
+
+
+
+
+</style>
+<body>
+    <div class="container">
+        <div class="title">
+            <h2>Todo List</h2>
+        </div>
+        <form class="input-div" method="POST" action="addtodo">
+            {% csrf_token %}
+            <input class="input-task" type="text" placeholder="Enter the task" name="message">
+            <button type="submit" class="add-btn">Add</button>
+        </form>
+        <div class="todo-container">
+            {% for todo in todos %}
+            <div class="todo">
+                <p id="message-{{todo.id}}" class="message">{{ todo.message }}</p>
+
+                <div class="btn-container">
+
+                    <form id="edit-form-{{ todo.id }}" class="edit-form" action="{% url 'edittodo' todo.id %}" method="post">
+                        {% csrf_token %}
+                        <input class="input-task-edit" type="text" name="message" value="{{ todo.message }}" autofocus/>
+                        <button type="submit" style="display: none;">Save</button>
+                    </form>
+                    <button class="edit-btn" id="edit-btn-{{todo.id}}" onclick="toggleEditForm({{ todo.id }})">📝</button>
+
+                    <form action="{% url 'deletetodo' todo.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="close-btn">❌</button>
+                    </form>
+                    
+                   
+                </div>
+               
+
+                
+            </div>
+            {% endfor %}
+            <!-- <div class="todo">
+                <p>This is task 2</p>
+                <div class="btn-container">
+                    <button class="edit-btn">📝</button>
+                    <button class="close-btn">❌</button>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    
+</body>
+</html>
+
+<script>
+    function toggleEditForm(id) {
+        var editForm = document.getElementById('edit-form-' + id);
+        var message = document.getElementById('message-' + id);
+        var editbtn = document.getElementById('edit-btn-' + id);
+
+        if (editForm.style.display === 'none') {
+            editForm.style.display = 'flex';
+        } else {
+            editForm.style.display = 'none';
+        }
+
+        if (message.style.display === 'block') {
+            message.style.display = 'none';
+        } else {
+            message.style.display = 'block';
+        }
+
+        if(editbtn.innerHTML == "✅"){
+            editbtn.innerHTML = "📝"
+        }else{
+            editbtn.innerHTML = "✅"
+        }
+    }
+</script>
