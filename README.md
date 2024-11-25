@@ -20,7 +20,7 @@ A simple **To-Do List App** built with **Django** and powered by an **SQLite dat
 
 1. **Clone the Repository**  
    ```bash  
-   git clone https://github.com/your-username/todo-app-django.git  
+   git clone https://github.com/ShivamKuite07/Todo-App-using-Django.git
    cd todo-app-django  
    ```  
 
